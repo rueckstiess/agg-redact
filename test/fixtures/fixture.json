@@ -1,0 +1,10 @@
+[
+  {
+    "executedPlans": [
+      {
+        "databaseName": "foo",
+        "something": "else"
+      }
+    ]
+  }
+]

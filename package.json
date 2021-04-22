@@ -1,0 +1,24 @@
+{
+  "name": "redact-adl-metrics",
+  "version": "0.1.0",
+  "description": "Redacts Atlas Data Lake Query Metrics data. ",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha -r esm ./src/**/*.test.js --watch"
+  },
+  "bin": {
+    "adlredact": "bin/redact"
+  },
+  "author": "Thomas Rueckstiess",
+  "license": "MIT",
+  "dependencies": {
+    "bson": "^4.2.0",
+    "esm": "^3.2.25",
+    "lodash": "^4.17.20",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
+  }
+}
