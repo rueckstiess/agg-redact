@@ -1,16 +1,22 @@
+import murmur from "imurmurhash";
+import { createHash } from "crypto";
+import base58 from "base-58";
+
 const fieldsToRemove = ["clientApplicationName"];
 const fieldsToHash = [
   "executedPlans.databaseName",
   "executedPlans.collectionName",
 ];
 
+const hash = createHash("sha1");
+
 function hashKey(key) {}
 
-export function redact(doc) {
-  if (doc === "foo") {
-    return "bar";
-  }
+function hashValue(value) {
+  return base58.encode(hash.update(value).digest()).slice(0, 10);
+}
 
+export function redact(doc, isOperatorTopLevel = false) {
   if (Array.isArray(doc)) {
     return doc.map(redact);
   }
@@ -25,3 +31,5 @@ export function redact(doc) {
 
   return hashValue(String(doc));
 }
+
+export default redact;
