@@ -1,13 +1,45 @@
-export const KEY_PRESERVING_OPS = ["$cond"];
-export const NUM_VALUE_PRESERVING_STAGES = [
-  "$project",
-  "$sort",
-  "$limit",
+export const KEY_PRESERVING_OPS = [
+  "$accumulator",
+  "$cond",
+  "$convert",
+  "$dateFromParts",
+  "$dateToParts",
+  "$dateFromString",
+  "$dateToString",
+  "$filter",
+  "$function",
+  "$let",
+  "$lookup",
+  "$ltrim",
+  "$map",
+  "$merge",
+  "$out",
+  "$reduce",
+  "$regexFind",
+  "$regexFindAll",
+  "$regexMatch",
+  "$replaceOne",
+  "$replaceAll",
+  "$replaceRoot",
+  "$rtrim",
   "$sample",
+  "$switch",
+  "$trim",
+  "$unionWith",
+  "$unwind",
+  "$zip",
 ];
 
-const fieldsToRemove = ["clientApplicationName"];
-const fieldsToHash = [
+export const NUM_VALUE_PRESERVING_STAGES = [
+  "$limit",
+  "$project",
+  "$sort",
+  "$sample",
+  "$skip",
+];
+
+const ADLQM_FIELDS_TO_HASH = [
+  "clientApplicationName",
   "executedPlans.databaseName",
   "executedPlans.collectionName",
 ];

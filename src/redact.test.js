@@ -72,6 +72,22 @@ describe("redact", function () {
     });
   });
 
+  it("applies a salt to the hash when one is provided", function () {
+    expect(redact("food")).to.not.equal(redact("food", { salt: "pepper" }));
+  });
+
+  it("returns the same hash deterministically with the same salt", function () {
+    expect(redact("food", { salt: "pepper" })).to.equal(
+      redact("food", { salt: "pepper" })
+    );
+  });
+
+  it("returns different hashes with a different salt", function () {
+    expect(redact("food", { salt: "pepper" })).to.not.equal(
+      redact("food", { salt: "oregano" })
+    );
+  });
+
   it("does not hash booleans or null", function () {
     expect(redact(true)).to.equal(true);
     expect(redact(null)).to.equal(null);
@@ -99,10 +115,34 @@ describe("redact", function () {
     expect(redact({ $limit: 100 })).to.deep.equal({ $limit: 100 });
   });
 
-  it("redacts agg1 correctly", function () {
-    const output = redact(agg1);
-    console.log(
-      inspect(output, { showHidden: false, depth: null, colors: true })
-    );
+  describe("Examples", function () {
+    it("preserves top-level keys when $out takes an object", function () {
+      expect(redact({ $out: { db: "cloud", coll: "food" } })).to.be.deep.equal({
+        $out: {
+          db: HASH_LOOKUP.cloud,
+          coll: HASH_LOOKUP.food,
+        },
+      });
+    });
+
+    it("does not preserve values when $out takes a string", function () {
+      expect(redact({ $out: "bike" })).to.be.deep.equal({
+        $out: HASH_LOOKUP.bike,
+      });
+    });
+
+    it("redacts $addFields correctly", function () {
+      const output = redact(agg1[0]);
+      expect(output).to.deep.equal({
+        $addFields: {
+          "2JM8FiUZYu": {
+            $divide: [
+              { $subtract: ["$3TKRfeE3ty", "$u1VJSHjtBj"] },
+              "<number N3ZkQLVu1a>",
+            ],
+          },
+        },
+      });
+    });
   });
 });

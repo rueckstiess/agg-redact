@@ -13,19 +13,52 @@ import {
 } from "lodash";
 import base58 from "base-58";
 
-function hash(input) {
-  const hash = createHash("sha1");
-  return base58.encode(hash.update(input).digest()).slice(0, 10);
-}
-
-function hashString(str) {
-  if (str.includes(".")) {
-    return str.split(".").map(hash).join(".");
+/**
+ * Uses crypto.createHash to calculate the hash, then encodes the
+ * digest with base-58 and truncates after 10 characters.
+ *
+ * @param {String} input   string to be hashed
+ * @param {String} salt    salt to randomise the hash
+ * @returns {String}       the hash digest
+ */
+function hash(input, salt = "") {
+  const sha1 = createHash("sha1");
+  sha1.update(input);
+  if (salt) {
+    sha1.update(hash(salt, ""));
   }
-  return hash(str);
+  return base58.encode(sha1.digest()).slice(0, 10);
 }
 
-function hashKey(key) {
+/**
+ * Hashes the string with the hash() function. If the string contains
+ * a '.' character, the string is first split, each segment hashed
+ * individually and then recombined.
+ *
+ * @param {String} str    input string to be hashed
+ * @param {String} salt   salt to randomise the hash
+ * @returns               the hash digest
+ */
+function hashString(str, salt) {
+  if (str.includes(".")) {
+    return str
+      .split(".")
+      .map((x) => hash(x, salt))
+      .join(".");
+  }
+  return hash(str, salt);
+}
+
+/**
+ * Hashes an object key, except if it starts with a $ or is the
+ * literal string "_id".
+ *
+ * @param {String} key    object key to be hashed
+ * @param {String} salt   salt to randomise the hash
+
+ * @returns               the hash digest
+ */
+function hashKey(key, salt) {
   if (key.startsWith("$")) {
     return key;
   }
@@ -34,31 +67,53 @@ function hashKey(key) {
     return key;
   }
 
-  return hashString(key);
+  return hashString(key, salt);
 }
 
-function hashValue(value) {
+/**
+ * Hashes any object value (right-hand side) except
+ *   - booleans and null types
+ *   - strings starting with $$ (system variables)
+ *   - strings starting with $ (field paths) are hashed
+ *     but the $ is preserved at the start
+ *
+ * @param {Any} value     Object value to be hashed
+ * @param {String} salt   salt to randomise the hash
+
+ * @returns               the hash digest
+ */
+function hashValue(value, salt) {
   if (isBoolean(value) || isNull(value)) {
     return value;
   }
 
   if (!isString(value)) {
-    return `<${typeof value} ${hashString(String(value))}>`;
+    return `<${typeof value} ${hashString(String(value), salt)}>`;
   }
 
   if (value.startsWith("$$")) {
     return value;
   }
   if (value.startsWith("$")) {
-    return "$" + hashString(value.slice(1));
+    return "$" + hashString(value.slice(1), salt);
   }
 
-  return hashString(value);
+  return hashString(value, salt);
 }
 
+/**
+ * Main function to redact any type, including objects and arrays.
+ *
+ * @param {Any} input   input to be hashed
+ * @param {Object} options
+ * @param {Boolean} options.preserveTopLevelKeys   does not hash top-level keys in object
+ * @param {Boolean} options.preserveValueNumbers   does not hash numeric values in object
+ * @param {String} options.salt                    salt to randomise the hash
+ * @returns   same as input but with hashed keys/values
+ */
 export function redact(
   input,
-  { preserveTopLevelKeys = false, preserveValueNumbers = false } = {}
+  { preserveTopLevelKeys = false, preserveValueNumbers = false, salt = "" } = {}
 ) {
   if (isArray(input)) {
     return input.map(redact);
@@ -67,8 +122,9 @@ export function redact(
   if (isObject(input)) {
     return fromPairs(
       toPairs(input).map(([key, value]) => [
-        preserveTopLevelKeys ? key : hashKey(key),
+        preserveTopLevelKeys ? key : hashKey(key, salt),
         redact(value, {
+          salt,
           preserveTopLevelKeys: KEY_PRESERVING_OPS.includes(key),
           preserveValueNumbers:
             preserveValueNumbers || NUM_VALUE_PRESERVING_STAGES.includes(key),
@@ -82,7 +138,7 @@ export function redact(
   }
 
   // for every other type, convert to string explicitly, then hash
-  return hashValue(input);
+  return hashValue(input, salt);
 }
 
 export default redact;
