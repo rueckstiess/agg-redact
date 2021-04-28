@@ -14,8 +14,6 @@
   "dependencies": {
     "base-58": "^0.0.1",
     "esm": "^3.2.25",
-    "hash36": "^1.0.0",
-    "imurmurhash": "^0.1.4",
     "lodash": "^4.17.21",
     "yargs": "^16.2.0"
   },

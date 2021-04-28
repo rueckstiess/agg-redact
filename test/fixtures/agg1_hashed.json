@@ -1,0 +1,119 @@
+[
+  {
+    "$addFields": {
+      "2JM8FiUZYu": {
+        "$divide": [
+          {
+            "$subtract": [
+              "$3TKRfeE3ty",
+              "$u1VJSHjtBj"
+            ]
+          },
+          "<number N3ZkQLVu1a>"
+        ]
+      }
+    }
+  },
+  {
+    "$match": {
+      "u1VJSHjtBj": {
+        "$gte": {
+          "$date": "4QXEvNvvU8.2V3e3tkDgt"
+        }
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "u1VJSHjtBj": {
+        "$cond": {
+          "if": {
+            "$eq": [
+              {
+                "$type": "$u1VJSHjtBj"
+              },
+              "4FQ7EDT3r5"
+            ]
+          },
+          "then": "$u1VJSHjtBj",
+          "else": null
+        }
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "HYJEC54H8n": {
+        "27bVWkyNEb": {
+          "$year": "$u1VJSHjtBj"
+        },
+        "2gxQ2uNwnw": {
+          "$subtract": [
+            {
+              "$month": "$u1VJSHjtBj"
+            },
+            "<number kALBf3r1tJ>"
+          ]
+        },
+        "4FQ7EDT3r5": {
+          "$dayOfMonth": "$u1VJSHjtBj"
+        }
+      }
+    }
+  },
+  {
+    "$group": {
+      _id: {
+        "HYJEC54H8n": "$HYJEC54H8n",
+        "KwSa87YveQ": "$3J3gw2mSLy"
+      },
+      "4YAhyu5uEt": {
+        "$sum": "$2JM8FiUZYu"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "HYJEC54H8n": "$3KPspaZNx5.HYJEC54H8n",
+      "KwSa87YveQ": "$3KPspaZNx5.KwSa87YveQ",
+      "4YAhyu5uEt": 1
+    }
+  },
+  {
+    "$project": {
+      "FWtJbEAMJY": "$HYJEC54H8n",
+      "363ETDZjRq": "$4YAhyu5uEt",
+      "2Xjg5Ur1Mz": "$KwSa87YveQ",
+      "_id": 0
+    }
+  },
+  {
+    "$group": {
+      "_id": {
+        "FWtJbEAMJY": "$FWtJbEAMJY"
+      },
+      "3kWtcBaLnS": {
+        "$push": "$$ROOT"
+      }
+    }
+  },
+  {
+    "$sort": {
+      "3KPspaZNx5.FWtJbEAMJY.27bVWkyNEb": 1,
+      "3KPspaZNx5.FWtJbEAMJY.2gxQ2uNwnw": 1,
+      "3KPspaZNx5.FWtJbEAMJY.4FQ7EDT3r5": 1
+    }
+  },
+  {
+    "$unwind": "$3kWtcBaLnS"
+  },
+  {
+    "$replaceRoot": {
+      "2vuhjHcvd4": "$3kWtcBaLnS"
+    }
+  },
+  {
+    "$limit": 5000
+  }
+]
