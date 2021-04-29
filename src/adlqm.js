@@ -1,6 +1,6 @@
 import redact from "./redact";
 import { ADLQM_FIELDS_TO_HASH, ADLQM_JSON_FIELD } from "./constants";
-import { isArray, isPlainObject, isString, mapValues, some } from "lodash";
+import { isArray, isPlainObject, mapValues, some } from "lodash";
 import { EJSON } from "bson";
 
 export function redactQueryMetrics(doc, pathPrefix = "") {

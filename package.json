@@ -2,9 +2,16 @@
   "name": "agg-redact",
   "version": "0.1.0",
   "description": "Redacts MongoDB Aggregation Pipelines",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "mocha -r esm ./src/**/*.test.js --watch"
+    "test": "mocha -r esm ./src/**/*.test.js --watch",
+    "build": "babel src --out-dir lib",
+    "prepublish": "yarn build"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   },
   "bin": {
     "agg-redact": "bin/redact"
@@ -19,6 +26,9 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
     "chai": "^4.3.4",
     "mocha": "^8.3.2"
   }

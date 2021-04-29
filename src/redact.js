@@ -116,7 +116,7 @@ export function redact(
   { preserveTopLevelKeys = false, preserveValueNumbers = false, salt = "" } = {}
 ) {
   if (isArray(input)) {
-    return input.map(redact);
+    return input.map((x) => redact(x, { preserveValueNumbers, salt }));
   }
 
   if (isObject(input)) {
