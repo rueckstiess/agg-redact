@@ -1,0 +1,374 @@
+{
+  "_id": "167a33316492fe6827e82881",
+  "schemaVersion": 2,
+  "tenantID": "608a058dbc76ce63eeba815b",
+  "commandName": "aggregate",
+  "clientDriverName": "MongoDB Internal Client",
+  "clientDriverVersion": "4.4.3",
+  "clientApplicationName": "MongoDB Shell",
+  "startTime": {
+    "$date": "2021-04-29T02:28:23.226Z"
+  },
+  "endTime": {
+    "$date": "2021-04-29T02:28:35.364Z"
+  },
+  "executionEndTime": {
+    "$date": "2021-04-29T02:28:35.166Z"
+  },
+  "executedPlans": [
+    {
+      "databaseName": "sample_mflix",
+      "collectionName": "users",
+      "pipeline": [
+        {
+          "name": "$addFields",
+          "json": "{\"$addFields\":{\"tomatoes.critic.tomatoMeter\":{\"$cond\":{\"if\":{\"$gte\":[\"$tomatoes.critic.meter\",{\"$numberDouble\":\"0.0\"}]},\"then\":{\"$cond\":{\"if\":{\"$gte\":[\"$tomatoes.critic.meter\",{\"$numberDouble\":\"60.0\"}]},\"then\":\"Fresh\",\"else\":\"Rotten\"}},\"else\":\"Not Rated\"}}}}",
+          "operators": [
+            "$cond",
+            "$gte"
+          ],
+          "referencedFields": [
+            "tomatoes.critic.meter"
+          ],
+          "definedFields": [
+            "tomatoes.critic.tomatoMeter"
+          ]
+        },
+        {
+          "name": "$unwind",
+          "json": "{\"$unwind\":\"$cast\"}",
+          "referencedFields": [
+            "cast"
+          ],
+          "definedFields": [
+            "cast"
+          ]
+        },
+        {
+          "name": "$group",
+          "json": "{\"$group\":{\"_id\":{\"__alias_0\":\"$cast\",\"__alias_1\":\"$tomatoes.critic.tomatoMeter\"},\"__alias_2\":{\"$sum\":{\"$numberDouble\":\"1.0\"}}}}",
+          "operators": [
+            "$sum"
+          ],
+          "referencedFields": [
+            "cast",
+            "tomatoes.critic.tomatoMeter"
+          ],
+          "definedFields": [
+            "_id",
+            "__alias_2"
+          ],
+          "group": {
+            "keyReferencedFields": [
+              "cast",
+              "tomatoes.critic.tomatoMeter"
+            ],
+            "itemReferencedFields": []
+          }
+        },
+        {
+          "name": "$project",
+          "json": "{\"$project\":{\"_id\":{\"$numberInt\":\"0\"},\"__alias_0\":\"$_id.__alias_0\",\"__alias_1\":\"$_id.__alias_1\",\"__alias_2\":{\"$numberInt\":\"1\"}}}",
+          "referencedFields": [
+            "_id.__alias_0",
+            "_id.__alias_1",
+            "__alias_2"
+          ],
+          "definedFields": [
+            "__alias_0",
+            "__alias_1",
+            "__alias_2"
+          ]
+        },
+        {
+          "name": "$project",
+          "json": "{\"$project\":{\"y\":\"$__alias_0\",\"x\":\"$__alias_2\",\"color\":\"$__alias_1\",\"_id\":{\"$numberInt\":\"0\"}}}",
+          "referencedFields": [
+            "__alias_0",
+            "__alias_2",
+            "__alias_1"
+          ],
+          "definedFields": [
+            "y",
+            "x",
+            "color"
+          ]
+        },
+        {
+          "name": "$addFields",
+          "json": "{\"$addFields\":{\"__agg_sum\":{\"$sum\":[\"$x\"]}}}",
+          "operators": [
+            "$sum"
+          ],
+          "referencedFields": [
+            "x"
+          ],
+          "definedFields": [
+            "__agg_sum"
+          ]
+        },
+        {
+          "name": "$group",
+          "json": "{\"$group\":{\"_id\":{\"y\":\"$y\"},\"__grouped_docs\":{\"$push\":\"$$ROOT\"},\"__agg_sum\":{\"$sum\":\"$__agg_sum\"}}}",
+          "operators": [
+            "$push",
+            "$sum"
+          ],
+          "systemVariables": [
+            "ROOT"
+          ],
+          "referencedFields": [
+            "y",
+            "__agg_sum"
+          ],
+          "definedFields": [
+            "_id",
+            "__grouped_docs",
+            "__agg_sum"
+          ],
+          "group": {
+            "keyReferencedFields": [
+              "y"
+            ],
+            "itemReferencedFields": [
+              "__agg_sum"
+            ]
+          }
+        },
+        {
+          "name": "$sort",
+          "json": "{\"$sort\":{\"__agg_sum\":{\"$numberInt\":\"-1\"}}}",
+          "referencedFields": [
+            "__agg_sum"
+          ]
+        },
+        {
+          "name": "$limit",
+          "json": "{\"$limit\":{\"$numberLong\":\"10\"}}",
+          "limit": 10
+        },
+        {
+          "name": "$unwind",
+          "json": "{\"$unwind\":\"$__grouped_docs\"}",
+          "referencedFields": [
+            "__grouped_docs"
+          ],
+          "definedFields": [
+            "__grouped_docs"
+          ]
+        },
+        {
+          "name": "$replaceRoot",
+          "json": "{\"$replaceRoot\":{\"newRoot\":\"$__grouped_docs\"}}",
+          "referencedFields": [
+            "__grouped_docs"
+          ]
+        },
+        {
+          "name": "$project",
+          "json": "{\"$project\":{\"__agg_sum\":{\"$numberInt\":\"0\"}}}"
+        },
+        {
+          "name": "$limit",
+          "json": "{\"$limit\":{\"$numberLong\":\"5000\"}}",
+          "limit": 5000
+        }
+      ],
+      "pushdownPipeline": [
+        {
+          "name": "$unwind",
+          "json": "{\"$unwind\":\"$cast\"}",
+          "referencedFields": [
+            "cast"
+          ],
+          "definedFields": [
+            "cast"
+          ]
+        },
+        {
+          "name": "$addFields",
+          "json": "{\"$addFields\":{\"tomatoes.critic.tomatoMeter\":{\"$cond\":{\"if\":{\"$gte\":[\"$tomatoes.critic.meter\",{\"$numberDouble\":\"0.0\"}]},\"then\":{\"$cond\":{\"if\":{\"$gte\":[\"$tomatoes.critic.meter\",{\"$numberDouble\":\"60.0\"}]},\"then\":\"Fresh\",\"else\":\"Rotten\"}},\"else\":\"Not Rated\"}}}}",
+          "operators": [
+            "$cond",
+            "$gte"
+          ],
+          "referencedFields": [
+            "tomatoes.critic.meter"
+          ],
+          "definedFields": [
+            "tomatoes.critic.tomatoMeter"
+          ]
+        },
+        {
+          "name": "$group",
+          "json": "{\"$group\":{\"_id\":{\"__alias_0\":\"$cast\",\"__alias_1\":\"$tomatoes.critic.tomatoMeter\"},\"__alias_2\":{\"$sum\":{\"$numberDouble\":\"1.0\"}}}}",
+          "operators": [
+            "$sum"
+          ],
+          "referencedFields": [
+            "cast",
+            "tomatoes.critic.tomatoMeter"
+          ],
+          "definedFields": [
+            "_id",
+            "__alias_2"
+          ],
+          "group": {
+            "keyReferencedFields": [
+              "cast",
+              "tomatoes.critic.tomatoMeter"
+            ],
+            "itemReferencedFields": []
+          }
+        },
+        {
+          "name": "$project",
+          "json": "{\"$project\":{\"y\":\"$_id.__alias_0\",\"x\":\"$__alias_2\",\"color\":\"$_id.__alias_1\",\"_id\":{\"$numberInt\":\"0\"},\"__agg_sum\":{\"$sum\":[\"$__alias_2\"]}}}",
+          "operators": [
+            "$sum"
+          ],
+          "referencedFields": [
+            "_id.__alias_0",
+            "__alias_2",
+            "_id.__alias_1"
+          ],
+          "definedFields": [
+            "y",
+            "x",
+            "color",
+            "__agg_sum"
+          ]
+        },
+        {
+          "name": "$group",
+          "json": "{\"$group\":{\"_id\":\"$y\",\"__grouped_docs\":{\"$push\":\"$$ROOT\"},\"__agg_sum\":{\"$sum\":\"$__agg_sum\"}}}",
+          "operators": [
+            "$push",
+            "$sum"
+          ],
+          "systemVariables": [
+            "ROOT"
+          ],
+          "referencedFields": [
+            "y",
+            "__agg_sum"
+          ],
+          "definedFields": [
+            "_id",
+            "__grouped_docs",
+            "__agg_sum"
+          ],
+          "group": {
+            "keyReferencedFields": [
+              "y"
+            ],
+            "itemReferencedFields": [
+              "__agg_sum"
+            ]
+          }
+        },
+        {
+          "name": "$sort",
+          "json": "{\"$sort\":{\"__agg_sum\":{\"$numberInt\":\"-1\"}}}",
+          "referencedFields": [
+            "__agg_sum"
+          ]
+        },
+        {
+          "name": "$limit",
+          "json": "{\"$limit\":{\"$numberLong\":\"10\"}}",
+          "limit": 10
+        },
+        {
+          "name": "$addFields",
+          "json": "{\"$addFields\":{\"_id\":{\"y\":\"$_id\"}}}",
+          "referencedFields": [
+            "_id"
+          ],
+          "definedFields": [
+            "_id"
+          ]
+        },
+        {
+          "name": "$unwind",
+          "json": "{\"$unwind\":\"$__grouped_docs\"}",
+          "referencedFields": [
+            "__grouped_docs"
+          ],
+          "definedFields": [
+            "__grouped_docs"
+          ]
+        },
+        {
+          "name": "$limit",
+          "json": "{\"$limit\":{\"$numberLong\":\"5000\"}}",
+          "limit": 5000
+        },
+        {
+          "name": "$replaceRoot",
+          "json": "{\"$replaceRoot\":{\"newRoot\":\"$__grouped_docs\"}}",
+          "referencedFields": [
+            "__grouped_docs"
+          ]
+        },
+        {
+          "name": "$project",
+          "json": "{\"$project\":{\"__agg_sum\":{\"$numberInt\":\"0\"}}}"
+        }
+      ]
+    }
+  ],
+  "dataSources": {
+    "clusterVersions": [
+      {
+        "name": "4.4.5",
+        "count": 1,
+        "maxSize": 29568,
+        "minSize": 29568,
+        "totalSize": 29568
+      }
+    ],
+    "dataRegions": [
+      {
+        "name": "AWS/us-east-1",
+        "count": 1,
+        "maxSize": 29568,
+        "minSize": 29568,
+        "totalSize": 29568
+      }
+    ],
+    "formats": [
+      {
+        "name": "MONGO",
+        "count": 1,
+        "maxSize": 29568,
+        "minSize": 29568,
+        "totalSize": 29568
+      }
+    ],
+    "providers": [
+      {
+        "name": "atlas",
+        "count": 1,
+        "maxSize": 29568,
+        "minSize": 29568,
+        "totalSize": 29568
+      }
+    ]
+  },
+  "ingestedDocuments": {
+    "count": 0,
+    "maxSize": 0,
+    "minSize": 0,
+    "totalSize": 0
+  },
+  "returnedDocuments": {
+    "count": 0,
+    "maxSize": 0,
+    "minSize": 0,
+    "totalSize": 0
+  },
+  "lastUpdatedAt": {
+    "$date": "2021-04-29T02:33:50.291Z"
+  }
+}

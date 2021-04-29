@@ -1,7 +1,7 @@
 import redact from "./redact";
 import { expect } from "chai";
-import agg1 from "../test/fixtures/agg1";
-import { inspect } from "util";
+import queryMetricsExample from "../test/fixtures/query_metrics_example.json";
+import { EJSON } from "bson";
 
 const HASH_LOOKUP = {
   food: "ohr6mYusMt",
@@ -132,14 +132,34 @@ describe("redact", function () {
     });
 
     it("redacts $addFields correctly", function () {
-      const output = redact(agg1[0]);
+      const addFieldsStage = EJSON.parse(
+        queryMetricsExample.executedPlans[0].pipeline[0].json
+      );
+      const output = redact(addFieldsStage);
       expect(output).to.deep.equal({
         $addFields: {
-          "2JM8FiUZYu": {
-            $divide: [
-              { $subtract: ["$3TKRfeE3ty", "$u1VJSHjtBj"] },
-              "<number N3ZkQLVu1a>",
-            ],
+          "txfF2cdBoA.3qNeT5m15j.659P6rGc4i": {
+            $cond: {
+              if: {
+                $gte: [
+                  "$txfF2cdBoA.3qNeT5m15j.Ki6PjCeLPG",
+                  "<number 3YLsMd5zHB>",
+                ],
+              },
+              then: {
+                $cond: {
+                  if: {
+                    $gte: [
+                      "$txfF2cdBoA.3qNeT5m15j.Ki6PjCeLPG",
+                      "<number 4DU5UkCRwP>",
+                    ],
+                  },
+                  then: "4S599TETwz",
+                  else: "ExL7SeFfSd",
+                },
+              },
+              else: "37XtSBEjk6",
+            },
           },
         },
       });
