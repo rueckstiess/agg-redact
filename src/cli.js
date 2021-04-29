@@ -1,9 +1,7 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { redact } from "./redact";
-import { inspect } from "util";
 import { EJSON } from "bson";
-import { argv } from "process";
 
 export function cli() {
   const t = new Date();
@@ -17,6 +15,8 @@ export function cli() {
       description: "Add custom salt to hash function",
     })
     .demandCommand(1).argv;
-  console.log(args);
-  console.log(inspect(redact(EJSON.parse(args._[0]), { salt: args.salt })));
+
+  console.log(
+    EJSON.stringify(redact(EJSON.parse(args._[0]), { salt: args.salt }))
+  );
 }

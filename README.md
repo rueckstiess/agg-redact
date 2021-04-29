@@ -14,7 +14,7 @@ console.log(
       { $sort: { secretField: 1 } },
       { $limit: 1 },
     ],
-    "just-a-bit-of-salt" // optional
+    "a-hint-of-salt" // optional
   )
 );
 ```
@@ -31,7 +31,7 @@ console.log(
       { $sort: { secretField: 1 } },
       { $limit: 1 },
     ],
-    "just-a-bit-of-salt" // optional
+    "a-hint-of-salt" // optional
   )
 );
 ```
@@ -39,11 +39,15 @@ console.log(
 ## Command Line Usage
 
 ```bash
-agg-redact '[{"$match":{"secretField":"secretValue"}},{"$sort":{"secretField":1}},{"$limit":1}]'
+$ agg-redact '[{"$match":{"secretField":"secretValue"}},{"$sort":{"secretField":1}},{"$limit":1}]' --salt a-hint-of-salt
+```
 
+## Output
+
+```
 [
-  { '$match': { fvScLdDR2p: 'L8jiUWxDWm' } },
-  { '$sort': { fvScLdDR2p: 1 } },
-  { '$limit': 1 }
+  { "$match": { "2xhCG679ve": "3ifAaveZtF" } },
+  { "$sort": { "2xhCG679ve": 1 } },
+  { "$limit": 1 }
 ]
 ```
