@@ -1,13 +1,13 @@
 {
-  "name": "redact-adl-metrics",
+  "name": "agg-redact",
   "version": "0.1.0",
-  "description": "Redacts Atlas Data Lake Query Metrics data. ",
+  "description": "Redacts MongoDB Aggregation Pipelines",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha -r esm ./src/**/*.test.js --watch"
   },
   "bin": {
-    "adlredact": "bin/redact"
+    "agg-redact": "bin/redact"
   },
   "author": "Thomas Rueckstiess",
   "license": "MIT",

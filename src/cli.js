@@ -1,24 +1,15 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import { redact } from "./redact";
+import { inspect } from "util";
+import { EJSON } from "bson";
 
 export function cli() {
   const t = new Date();
 
   const args = yargs(hideBin(process.argv))
-    .fail(function (msg, err, yargs) {
-      if (err) {
-        console.error(`\n\n${err}\n\n`);
-        process.exit(1);
-      }
-      console.error(yargs.help());
-      console.error(`\n\n${msg}`);
-    })
-    .onFinishCommand(() => {
-      const duration = new Date() - t;
-      console.log(`\ncompleted in ${duration} ms.`);
-    })
-    .wrap(120)
+    .example('$0 \'[{"$match": {"secretField": "secretValue"}}]\'')
     .demandCommand(1).argv;
 
-  console.log("ARGS", args);
+  console.log(inspect(redact(EJSON.parse(args._[0]))));
 }
