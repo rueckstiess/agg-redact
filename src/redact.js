@@ -83,7 +83,7 @@ function hashKey(key, salt) {
  * @returns               the hash digest
  */
 function hashValue(value, salt) {
-  if (isBoolean(value) || isNull(value)) {
+  if (isBoolean(value) || isNull(value) || value === "_id") {
     return value;
   }
 

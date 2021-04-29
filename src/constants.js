@@ -38,8 +38,14 @@ export const NUM_VALUE_PRESERVING_STAGES = [
   "$skip",
 ];
 
-const ADLQM_FIELDS_TO_HASH = [
-  "clientApplicationName",
-  "executedPlans.databaseName",
-  "executedPlans.collectionName",
+export const ADLQM_FIELDS_TO_HASH = [
+  /clientApplicationName/,
+  /executedPlans\.databaseName/,
+  /executedPlans\.collectionName/,
+  /executedPlans\..*[pP]ipeline\.definedFields/,
+  /executedPlans\..*[pP]ipeline\.referencedFields/,
+  /executedPlans\..*[pP]ipeline\.group\..+/,
+  /executedPlans\..*[pP]ipeline\.lookup\.[^h]/,
 ];
+
+export const ADLQM_JSON_FIELD = /json$/;
