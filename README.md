@@ -38,6 +38,14 @@ console.log(
 
 ## Command Line Usage
 
+Install with:
+
+```bash
+npm install -g agg-redact
+```
+
+Run the script with an aggregation pipeline in JSON (and optional salt):
+
 ```bash
 $ agg-redact '[{"$match":{"secretField":"secretValue"}},{"$sort":{"secretField":1}},{"$limit":1}]' --salt a-hint-of-salt
 ```
