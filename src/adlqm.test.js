@@ -5,6 +5,13 @@ import queryMetricsExample from "../test/fixtures/query_metrics_example.json";
 import { inspect } from "util";
 
 describe("redactQueryMetrics", function () {
+  it("passes the salt to the redact function", function () {
+    const result1 = redactQueryMetrics(queryMetricsExample, "salt1");
+    const result2 = redactQueryMetrics(queryMetricsExample, "salt2");
+    expect(result1.clientApplicationName).to.not.equal(
+      result2.clientApplicationName
+    );
+  });
   it("redacts the clientApplicationName field", function () {
     const result = redactQueryMetrics(queryMetricsExample);
     expect(result.clientApplicationName).to.equal(redact("MongoDB Shell"));
