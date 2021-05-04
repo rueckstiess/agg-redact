@@ -1,11 +1,11 @@
-# agg-redact
+# mqlredact
 
 Redacts MongoDB Aggregation Pipelines by hashing user-provided keys and values.
 
 ## Programmatic Usage (ESM)
 
 ```js
-import { redact } from "agg-redact";
+import { redact } from "mqlredact";
 
 console.log(
   redact(
@@ -22,7 +22,7 @@ console.log(
 ## Programmatic Usage (CJS)
 
 ```js
-const redact = require("agg-redact").default;
+const redact = require("mqlredact").default;
 
 console.log(
   redact(
@@ -41,13 +41,13 @@ console.log(
 Install with:
 
 ```bash
-npm install -g agg-redact
+npm install -g mqlredact
 ```
 
 Run the script with an aggregation pipeline in JSON (and optional salt):
 
 ```bash
-$ agg-redact '[{"$match":{"secretField":"secretValue"}},{"$sort":{"secretField":1}},{"$limit":1}]' --salt a-hint-of-salt
+$ mqlredact '[{"$match":{"secretField":"secretValue"}},{"$sort":{"secretField":1}},{"$limit":1}]' --salt a-hint-of-salt
 ```
 
 ## Output
