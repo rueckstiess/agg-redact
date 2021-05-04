@@ -1,6 +1,6 @@
 {
-  "name": "agg-redact",
-  "version": "0.2.0",
+  "name": "mqlredact",
+  "version": "0.5.0",
   "description": "Redacts MongoDB Aggregation Pipelines",
   "main": "lib/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     ]
   },
   "bin": {
-    "agg-redact": "bin/redact"
+    "mqlredact": "bin/mqlredact"
   },
   "author": "Thomas Rueckstiess",
   "license": "MIT",
