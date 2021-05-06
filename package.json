@@ -1,6 +1,6 @@
 {
   "name": "mqlredact",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Redacts MongoDB Aggregation Pipelines",
   "main": "lib/index.js",
   "scripts": {
@@ -21,6 +21,7 @@
   "dependencies": {
     "base-58": "^0.0.1",
     "bson": "^4.3.0",
+    "esm": "^3.2.25",
     "lodash": "^4.17.21",
     "yargs": "^16.2.0"
   },
@@ -29,7 +30,6 @@
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.3.4",
-    "esm": "^3.2.25",
     "mocha": "^8.3.2"
   }
 }
