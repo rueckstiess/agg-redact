@@ -2,7 +2,6 @@ import redactQueryMetrics from "./adlqm";
 import redact from "./redact";
 import { expect } from "chai";
 import queryMetricsExample from "../test/fixtures/query_metrics_example.json";
-import { inspect } from "util";
 
 describe("redactQueryMetrics", function () {
   it("passes the salt to the redact function", function () {
@@ -34,6 +33,14 @@ describe("redactQueryMetrics", function () {
     const result = redactQueryMetrics(queryMetricsExample);
     expect(result.executedPlans[0].pipeline[0].json).to.not.equal(
       queryMetricsExample.executedPlans[0].pipeline[0].json
+    );
+  });
+  it("falls back to replacing value with a placeholder string if the redaction throws an error", function () {
+    const input = { "test.json": '{"r": {"$regex": "foo", "$options": "gi"}}' };
+    const result = redactQueryMetrics(input);
+    console.log("result", result);
+    expect(result["test.json"]).to.match(
+      /{"25rGiRjCuL":{"\$regex":"AeF1qioaaY","\$options":"4X1AjEwehM"}}/
     );
   });
   it("keeps the fields in definedFields consistent with the fields in the redacted pipeline", function () {

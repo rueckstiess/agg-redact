@@ -2,6 +2,7 @@ import redact from "./redact";
 import { ADLQM_FIELDS_TO_HASH, ADLQM_JSON_FIELD } from "./constants";
 import { isArray, isPlainObject, mapValues, some } from "lodash";
 import { EJSON } from "bson";
+import { inspect } from "util";
 
 export function redactQueryMetrics(doc, salt = "", pathPrefix = "") {
   if (!isArray(doc) && !isPlainObject(doc)) {
@@ -28,7 +29,11 @@ export function redactQueryMetrics(doc, salt = "", pathPrefix = "") {
 
     // redaction of json field in pipelines
     if (key.match(ADLQM_JSON_FIELD)) {
-      return EJSON.stringify(redact(EJSON.parse(value), { salt }));
+      try {
+        return EJSON.stringify(redact(EJSON.parse(value), { salt }));
+      } catch (err) {
+        return EJSON.stringify(redact(JSON.parse(value), { salt }));
+      }
     }
 
     return value;
