@@ -21,7 +21,7 @@ import base58 from "base-58";
  * @param {String} salt    salt to randomise the hash
  * @returns {String}       the hash digest
  */
-function hash(input, salt = "") {
+export function hash(input, salt = "") {
   const sha1 = createHash("sha1");
   sha1.update(input);
   if (salt) {

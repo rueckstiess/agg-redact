@@ -1,5 +1,9 @@
-import redact from "./redact";
-import { ADLQM_FIELDS_TO_HASH, ADLQM_JSON_FIELD } from "./constants";
+import { redact, hash } from "./redact";
+import {
+  ADLQM_FIELDS_TO_HASH,
+  ADLQM_JSON_FIELD,
+  ADLQM_PIPELINE_FIELD,
+} from "./constants";
 import { isArray, isPlainObject, mapValues, some } from "lodash";
 import { EJSON } from "bson";
 import { inspect } from "util";
@@ -17,6 +21,17 @@ export function redactQueryMetrics(doc, salt = "", pathPrefix = "") {
     // simple value redaction
     if (some(ADLQM_FIELDS_TO_HASH, (x) => key.match(x))) {
       return redact(value, { salt });
+    }
+
+    // add pipeline prefix hashes to the pipeline
+    if (key.match(ADLQM_PIPELINE_FIELD)) {
+      value.forEach((stage, i) => {
+        const json = value
+          .slice(0, i + 1)
+          .map((s) => s.json)
+          .join(",");
+        value[i].prefixHash = hash(json, salt);
+      });
     }
 
     if (isArray(value)) {
