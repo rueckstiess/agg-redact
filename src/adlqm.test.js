@@ -3,6 +3,7 @@ import redact from "./redact";
 import { expect } from "chai";
 import queryMetricsExample from "../test/fixtures/query_metrics_example.json";
 import { inspect } from "util";
+import { range } from "lodash";
 
 describe("redactQueryMetrics", function () {
   it("passes the salt to the redact function", function () {
@@ -48,6 +49,15 @@ describe("redactQueryMetrics", function () {
     result.executedPlans[0].pipeline.forEach((stage) =>
       expect(Object.keys(stage)).to.include("prefixHash")
     );
+  });
+  it("adds index fields to the pipeline array", function () {
+    const result = redactQueryMetrics(queryMetricsExample);
+    result.executedPlans[0].pipeline.forEach((stage) =>
+      expect(Object.keys(stage)).to.include("index")
+    );
+    expect(
+      result.executedPlans[0].pipeline.map((stage) => stage.index)
+    ).to.deep.equal(range(result.executedPlans[0].pipeline.length));
   });
   it("keeps the fields in definedFields consistent with the fields in the redacted pipeline", function () {
     const result = redactQueryMetrics(queryMetricsExample);

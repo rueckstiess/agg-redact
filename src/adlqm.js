@@ -31,6 +31,7 @@ export function redactQueryMetrics(doc, salt = "", pathPrefix = "") {
           .map((s) => s.json)
           .join(",");
         value[i].prefixHash = hash(json, salt);
+        value[i].index = i;
       });
     }
 
