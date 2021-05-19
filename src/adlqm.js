@@ -24,7 +24,7 @@ export function redactQueryMetrics(doc, salt = "", pathPrefix = "") {
     }
 
     // add pipeline prefix hashes to the pipeline
-    if (key.match(ADLQM_PIPELINE_FIELD)) {
+    if (key.match(ADLQM_PIPELINE_FIELD) && isArray(value)) {
       value.forEach((stage, i) => {
         const json = value
           .slice(0, i + 1)
