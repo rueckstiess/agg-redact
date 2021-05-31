@@ -1,6 +1,6 @@
 {
   "name": "mqlredact",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Redacts MongoDB Aggregation Pipelines",
   "main": "lib/index.js",
   "scripts": {
