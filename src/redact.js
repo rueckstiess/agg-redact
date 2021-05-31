@@ -3,7 +3,7 @@ import { KEY_PRESERVING_OPS, NUM_VALUE_PRESERVING_STAGES } from "./constants";
 
 import {
   isArray,
-  isObject,
+  isPlainObject,
   isString,
   isBoolean,
   isNull,
@@ -88,7 +88,16 @@ function hashValue(value, salt) {
   }
 
   if (!isString(value)) {
-    return `<${typeof value} ${hashString(String(value), salt)}>`;
+    let type;
+    try {
+      type = toString
+        .call(value)
+        .match(/\[object (\w+)\]/)[1]
+        .toLowerCase();
+    } catch (err) {
+      type = typeof value;
+    }
+    return `<${type} ${hashString(String(value), salt)}>`;
   }
 
   if (value.startsWith("$$")) {
@@ -119,7 +128,7 @@ export function redact(
     return input.map((x) => redact(x, { preserveValueNumbers, salt }));
   }
 
-  if (isObject(input)) {
+  if (isPlainObject(input)) {
     return fromPairs(
       toPairs(input).map(([key, value]) => [
         preserveTopLevelKeys ? key : hashKey(key, salt),

@@ -14,6 +14,26 @@ describe("redact", function () {
     expect(redact("cloud")).to.be.equal(HASH_LOOKUP.cloud);
   });
 
+  it("retains the type when redacting dates", function () {
+    const d = new Date();
+    expect(redact(d))
+      .to.be.a("string")
+      .and.match(/^<date/);
+  });
+
+  it("retains the type when redacting numbers", function () {
+    const n = 1234.56;
+    expect(redact(n))
+      .to.be.a("string")
+      .and.match(/^<number/);
+  });
+
+  it("redacts different dates differently", function () {
+    const date1 = new Date("2021-05-31T11:22:33.444Z");
+    const date2 = new Date("2020-05-31T11:22:33.444Z");
+    expect(redact(date1)).to.not.be.deep.equal(redact(date2));
+  });
+
   it("redacts arrays of strings", function () {
     const input = ["food", "bike", "cloud"];
     const output = redact(input);
@@ -164,5 +184,16 @@ describe("redact", function () {
         },
       });
     });
+  });
+
+  it("redacts two different pipelines differently", function () {
+    const p1 = JSON.parse(
+      '{"$match":{"$and":[{"meta.type":{"$eq":"event_summary"}},{"meta.source.account_id":{"$eq":{"$numberInt":"3"}}},{"data.time":{"$gte":{"$date":{"$numberLong":"1614185417077"}}}},{"data.time":{"$lt":{"$date":{"$numberLong":"1621961417077"}}}}]}}'
+    );
+    const p2 = JSON.parse(
+      '{"$match":{"$and":[{"meta.type":{"$eq":"event_summary"}},{"meta.source.account_id":{"$eq":{"$numberInt":"3"}}},{"data.time":{"$gte":{"$date":{"$numberLong":"1619396971695"}}}},{"data.time":{"$lt":{"$date":{"$numberLong":"1621988971695"}}}}]}}'
+    );
+    expect(p1).to.not.be.deep.equal(p2);
+    expect(redact(p1)).to.not.be.deep.equal(redact(p2));
   });
 });
