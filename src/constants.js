@@ -50,4 +50,4 @@ export const ADLQM_FIELDS_TO_HASH = [
 
 export const ADLQM_JSON_FIELD = /json$/;
 
-export const ADLQM_PIPELINE_FIELD = /executedPlans\..*[pP]ipeline$/;
+export const ADLQM_PIPELINE_FIELD = /[pP]ipeline$/;
