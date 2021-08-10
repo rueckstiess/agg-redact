@@ -7,6 +7,12 @@ import readline from "readline";
 export function cli() {
   let args = yargs(hideBin(process.argv))
     .example('$0 \'[{"$match": {"secretField": "secretValue"}}]\'')
+    .option("scheme", {
+      alias: "c",
+      choices: ["hashed", "typed"],
+      default: "hashed",
+      description: "Choose redaction scheme",
+    })
     .option("salt", {
       alias: "s",
       type: "string",
@@ -18,10 +24,11 @@ export function cli() {
     args.demandCommand(1);
   }
   args = args.argv;
+  const { salt, scheme } = args;
 
   if (process.stdin.isTTY) {
     console.log(
-      EJSON.stringify(redact(EJSON.parse(args._[0]), { salt: args.salt }))
+      EJSON.stringify(redact(EJSON.parse(args._[0]), { salt, scheme }))
     );
   } else {
     // read from stdin line by line
@@ -32,9 +39,7 @@ export function cli() {
     });
 
     rl.on("line", function (line) {
-      console.log(
-        EJSON.stringify(redact(EJSON.parse(line), { salt: args.salt }))
-      );
+      console.log(EJSON.stringify(redact(EJSON.parse(line), { salt, scheme })));
     });
   }
 }

@@ -1,5 +1,10 @@
 import { createHash } from "crypto";
-import { KEY_PRESERVING_OPS, NUM_VALUE_PRESERVING_STAGES } from "./constants";
+import {
+  KEY_PRESERVING_OPS,
+  NUM_VALUE_PRESERVING_STAGES,
+  SCHEMES,
+  CONST,
+} from "./constants";
 
 import {
   isArray,
@@ -39,14 +44,14 @@ export function hash(input, salt = "") {
  * @param {String} salt   salt to randomise the hash
  * @returns               the hash digest
  */
-function hashString(str, salt) {
+function hashString(str, salt, scheme) {
   if (str.includes(".")) {
     return str
       .split(".")
-      .map((x) => hash(x, salt))
+      .map((x) => hashString(x, salt, scheme))
       .join(".");
   }
-  return hash(str, salt);
+  return scheme === SCHEMES.TYPED ? "string" : hash(str, salt, scheme);
 }
 
 /**
@@ -58,7 +63,7 @@ function hashString(str, salt) {
 
  * @returns               the hash digest
  */
-function hashKey(key, salt) {
+function hashKey(key, salt, scheme) {
   if (key.startsWith("$")) {
     return key;
   }
@@ -66,8 +71,10 @@ function hashKey(key, salt) {
   if (key === "_id") {
     return key;
   }
-
-  return hashString(key, salt);
+  if (scheme === SCHEMES.TYPED) {
+    return "key";
+  }
+  return hashString(key, salt, scheme);
 }
 
 /**
@@ -82,7 +89,7 @@ function hashKey(key, salt) {
 
  * @returns               the hash digest
  */
-function hashValue(value, salt) {
+function hashValue(value, salt, scheme) {
   if (isBoolean(value) || isNull(value) || value === "_id") {
     return value;
   }
@@ -97,17 +104,19 @@ function hashValue(value, salt) {
     } catch (err) {
       type = typeof value;
     }
-    return `<${type} ${hashString(String(value), salt)}>`;
+    return scheme === SCHEMES.TYPED
+      ? type
+      : `<${type} ${hashString(String(value), salt, scheme)}>`;
   }
 
   if (value.startsWith("$$")) {
     return value;
   }
   if (value.startsWith("$")) {
-    return "$" + hashString(value.slice(1), salt);
+    return "$" + hashString(value.slice(1), salt, scheme);
   }
 
-  return hashString(value, salt);
+  return hashString(value, salt, scheme);
 }
 
 /**
@@ -118,22 +127,29 @@ function hashValue(value, salt) {
  * @param {Boolean} options.preserveTopLevelKeys   does not hash top-level keys in object
  * @param {Boolean} options.preserveValueNumbers   does not hash numeric values in object
  * @param {String} options.salt                    salt to randomise the hash
+ * @param {String} options.scheme                  'hashed' or 'type', default is 'hashed'
  * @returns   same as input but with hashed keys/values
  */
 export function redact(
   input,
-  { preserveTopLevelKeys = false, preserveValueNumbers = false, salt = "" } = {}
+  {
+    preserveTopLevelKeys = false,
+    preserveValueNumbers = false,
+    salt = "",
+    scheme = SCHEMES.HASHED,
+  } = {}
 ) {
   if (isArray(input)) {
-    return input.map((x) => redact(x, { preserveValueNumbers, salt }));
+    return input.map((x) => redact(x, { preserveValueNumbers, salt, scheme }));
   }
 
   if (isPlainObject(input)) {
     return fromPairs(
       toPairs(input).map(([key, value]) => [
-        preserveTopLevelKeys ? key : hashKey(key, salt),
+        preserveTopLevelKeys ? key : hashKey(key, salt, scheme),
         redact(value, {
           salt,
+          scheme,
           preserveTopLevelKeys: KEY_PRESERVING_OPS.includes(key),
           preserveValueNumbers:
             preserveValueNumbers || NUM_VALUE_PRESERVING_STAGES.includes(key),
@@ -147,7 +163,7 @@ export function redact(
   }
 
   // for every other type, convert to string explicitly, then hash
-  return hashValue(input, salt);
+  return hashValue(input, salt, scheme);
 }
 
 export default redact;
