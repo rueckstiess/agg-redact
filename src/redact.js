@@ -45,13 +45,17 @@ export function hash(input, salt = "") {
  * @returns               the hash digest
  */
 function hashString(str, salt, scheme) {
+  if (scheme === SCHEMES.TYPED) {
+    return "string";
+  }
+
   if (str.includes(".")) {
     return str
       .split(".")
-      .map((x) => hashString(x, salt, scheme))
+      .map((x) => hash(x, salt, scheme))
       .join(".");
   }
-  return scheme === SCHEMES.TYPED ? "string" : hash(str, salt, scheme);
+  return hash(str, salt, scheme);
 }
 
 /**

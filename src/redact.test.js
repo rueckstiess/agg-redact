@@ -39,16 +39,12 @@ describe("redact", function () {
       expect(redact("$cloud", { scheme: "typed" })).to.be.equal("$string");
     });
 
-    it("hashes substrings of dotted path notation individually", function () {
-      expect(redact("food.cloud", { scheme: "typed" })).to.be.equal(
-        "string.string"
-      );
+    it("does not hash substrings of dotted path notation individually", function () {
+      expect(redact("food.cloud", { scheme: "typed" })).to.be.equal("string");
     });
 
-    it("hashes $-prefixed substrings of dotted path notation individually", function () {
-      expect(redact("$cloud.bike", { scheme: "typed" })).to.be.equal(
-        "$string.string"
-      );
+    it("does not hash $-prefixed substrings of dotted path notation individually", function () {
+      expect(redact("$cloud.bike", { scheme: "typed" })).to.be.equal("$string");
     });
     it("does not hash variables and constants that start with $$", function () {
       expect(redact("$$NOW", { scheme: "typed" })).to.be.equal("$$NOW");
